@@ -2,9 +2,15 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
+const path = require("path");
+const PORT = process.env.PORT || 5001;
 
 app.use(cors());
 app.use(express.json());
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+}
 
 // get all Todos
 
@@ -73,6 +79,10 @@ app.delete("/todos/:id", async (req, res) => {
   }
 });
 
-app.listen(5001, () => {
-  console.log("Server is running on 5001");
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build/index.html"));
+});
+
+app.listen(PORT, () => {
+  console.log("Server is running on port");
 });
